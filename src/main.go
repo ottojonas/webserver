@@ -58,16 +58,6 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintf(w, "wagwan")
 }
 
-func usersHandler(w http.ResponseWriter, r *http.Request) {
-	usersJSON, err := json.Marshal(api.Users)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError) 
-		return 
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(usersJSON)
-}
-
 func getAllUsersHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(api.Users)
