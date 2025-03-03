@@ -47,6 +47,7 @@ func main() {
 	http.HandleFunc("/api", apiHandler)
 	http.HandleFunc("/api/users", getAllUsersHandler)
 	http.HandleFunc("/api/users/{id}", getUserHandler)
+	http.HandleFunc("/api/createUser", createUserHandler) 
 	
 	port := ":3001"
 	fmt.Printf("Server is running on http://localhost%s\n", port)
@@ -92,4 +93,18 @@ func getUserHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	http.NotFound(w, r)
+}
+
+func createUserHandler(w http.ResponseWriter, r *http.Request) {
+	var newUser api.User
+	err := json.NewDecoder(r.Body).Decode(&newUser)
+	if err != nil {
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		return
+	}
+
+	newUser.ID = len(api.Users) + 1
+	api.Users = append(api.Users, newUser)
+	w.Header().Set("Content-Type", "application/json") 
+	json.NewEncoder(w).Encode(newUser)
 }
