@@ -37,35 +37,12 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func apiHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "API Endpoint") 
-}
-
-func main() {
-    http.HandleFunc("/", helloHandler)
-    http.HandleFunc("/ws", wsHandler)
-	http.HandleFunc("/api", apiHandler)
-	http.HandleFunc("/api/users", getAllUsersHandler)
-	http.HandleFunc("/api/users/{id}", getUserHandler)
-	http.HandleFunc("/api/createUser", createUserHandler) 
-	
-	port := ":3001"
-	fmt.Printf("Server is running on http://localhost%s\n", port)
-    log.Fatal(http.ListenAndServe(port, nil))
-}
-
 func helloHandler(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintf(w, "wagwan")
 }
 
-func usersHandler(w http.ResponseWriter, r *http.Request) {
-	usersJSON, err := json.Marshal(api.Users)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError) 
-		return 
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(usersJSON)
+func apiHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "API Endpoint") 
 }
 
 func getAllUsersHandler(w http.ResponseWriter, r *http.Request) {
@@ -108,3 +85,31 @@ func createUserHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json") 
 	json.NewEncoder(w).Encode(newUser)
 }
+
+func router(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path == "/api/users" {
+		switch r.Method {
+		case "GET": 
+			getAllUsersHandler(w, r) 
+			return 
+		case "POST": 
+			createUserHandler(w, r) 
+			return 
+		}
+	} else if strings.HasPrefix(r.URL.Path, "/api/users/") && r.Method == "GET" {
+		getUserHandler(w, r) 
+		return 
+	}
+	http.NotFound(w, r)
+}
+
+func main() {
+    http.HandleFunc("/", helloHandler)
+    http.HandleFunc("/ws", wsHandler)
+	http.HandleFunc("/api/", router)
+	
+	port := ":3001"
+	fmt.Printf("Server is running on http://localhost%s\n", port)
+    log.Fatal(http.ListenAndServe(port, nil))
+}
+
