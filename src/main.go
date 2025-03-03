@@ -1,9 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"webserver/src/api"
 
 	"github.com/gorilla/websocket"
 )
@@ -33,6 +35,10 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func apiHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "API Endpoint") 
+}
+
 func main() {
     http.HandleFunc("/", helloHandler)
     http.HandleFunc("/ws", wsHandler)
@@ -44,4 +50,14 @@ func main() {
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintf(w, "wagwan")
+}
+
+func usersHandler(w http.ResponseWriter, r *http.Request) {
+	usersJSON, err := json.Marshal(api.Users)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError) 
+		return 
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(usersJSON)
 }
