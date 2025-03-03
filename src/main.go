@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"webserver/src/api"
+	api "webserver/src/api/test-data"
 
 	"github.com/gorilla/websocket"
 )
