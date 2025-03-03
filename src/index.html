@@ -9,16 +9,20 @@
     <h1>WebSocket Test</h1>
     <script>
       const ws = new WebSocket("ws://localhost:3001/ws");
+
       ws.onopen = function () {
         console.log("Received from server");
         ws.send("wagwan server");
       };
+
       ws.onmessage = function (event) {
         console.log("Recevied from server:", event.data);
       };
+
       ws.onerror = function (error) {
         console.log("Websocket error: ", error);
       };
+
       ws.onclose = function () {
         console.log("WebSocket connection closed");
       };
