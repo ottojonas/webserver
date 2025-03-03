@@ -42,6 +42,8 @@ func apiHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
     http.HandleFunc("/", helloHandler)
     http.HandleFunc("/ws", wsHandler)
+	http.HandleFunc("/api", apiHandler)
+	http.HandleFunc("/api/users", usersHandler)
 	
 	port := ":3001"
 	fmt.Printf("Server is running on http://localhost%s\n", port)
