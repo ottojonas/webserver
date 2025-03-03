@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	api "webserver/src/api/test-data"
+	"strconv"
+	"strings"
+	"webserver/src/api"
 
 	"github.com/gorilla/websocket"
 )
@@ -43,7 +45,8 @@ func main() {
     http.HandleFunc("/", helloHandler)
     http.HandleFunc("/ws", wsHandler)
 	http.HandleFunc("/api", apiHandler)
-	http.HandleFunc("/api/users", usersHandler)
+	http.HandleFunc("/api/users", getAllUsersHandler)
+	http.HandleFunc("/api/users/{id}", getUserHandler)
 	
 	port := ":3001"
 	fmt.Printf("Server is running on http://localhost%s\n", port)
@@ -62,4 +65,31 @@ func usersHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(usersJSON)
+}
+
+func getAllUsersHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(api.Users)
+}
+
+func getUserHandler(w http.ResponseWriter, r *http.Request) {
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) < 4 {
+		http.Error(w, "Invalid URL", http.StatusBadRequest)
+		return 
+	}
+	idStr := parts[3]
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Invalid user id", http.StatusBadRequest)
+		return 
+	}
+	for _, user := range api.Users {
+		if user.ID == id {
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(user)
+			return 
+		}
+	}
+	http.NotFound(w, r)
 }
