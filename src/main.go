@@ -20,6 +20,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println("WebSocket upgrade failed:", err) 
+		http.Error(w, "WebSocket upgrade failed", http.StatusBadRequest)
 		return 
 	}
 	defer conn.Close()
@@ -39,10 +40,6 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintf(w, "wagwan")
-}
-
-func apiHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "API Endpoint") 
 }
 
 func getAllUsersHandler(w http.ResponseWriter, r *http.Request) {
