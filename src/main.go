@@ -1,9 +1,10 @@
 package main
 
 import (
-    "fmt"
-    "log"
-    "net/http"
+	"fmt"
+	"log"
+	"net/http"
+
 	"github.com/gorilla/websocket"
 )
 
@@ -34,7 +35,6 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
     http.HandleFunc("/", helloHandler)
-	http.HandleFunc("/api/users", usersHandler)
     http.HandleFunc("/ws", wsHandler)
 	
 	port := ":3001"
@@ -44,8 +44,4 @@ func main() {
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintf(w, "wagwan")
-}
-
-func usersHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Users endpoint")
 }
